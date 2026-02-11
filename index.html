@@ -16,7 +16,7 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      overflow: hidden; /* hides overflow on mobile */
+      overflow: hidden; /* hide overflow */
       position: relative;
       padding: 20px;
     }
@@ -25,22 +25,22 @@
     .valentine-container {
       text-align: center;
       background: rgba(255,255,255,0.9);
-      padding: 40px 30px;              
+      padding: 40px 30px;
       border-radius: 25px;
       box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-      max-width: 600px;                
+      max-width: 600px;
       width: 100%;
       position: relative;
       z-index: 1;
-      overflow: hidden; /* keep floating elements inside */
+      overflow: hidden; /* keep floating inside */
       transition: transform 0.3s ease;
     }
 
     /* Main image */
     .valentine-container img {
       width: 100%;
-      max-width: 250px;   
-      height: 250px;      
+      max-width: 250px;
+      height: 250px;
       object-fit: cover;
       border-radius: 50%;
       margin-bottom: 20px;
@@ -76,6 +76,18 @@
 
     .buttons button:hover {
       transform: scale(1.1);
+    }
+
+    /* Floating wrapper to prevent overflow */
+    .floating-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
     }
 
     /* Floating hearts & images */
@@ -138,29 +150,28 @@
 
     /* Modal image styling */
     .modal-content .message-img {
-        width: 100%;
-        max-width: 250px;   /* controls max size */
-        height: auto;        /* keeps aspect ratio */
-        border-radius: 20px; /* rounded corners */
-        margin: 15px 0;      /* spacing between text */
-        object-fit: cover;   /* keeps image nice */
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        transition: transform 0.3s ease;
+      width: 100%;
+      max-width: 250px;
+      height: auto;
+      border-radius: 20px;
+      margin: 15px 0;
+      object-fit: cover;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease;
     }
 
     .modal-content .message-img:hover {
-        transform: scale(1.05); /* subtle hover effect */
+      transform: scale(1.05);
     }
 
     .modal-content p .kiss {
-        font-size: 1.5rem;      /* make it bigger */
-        display: inline-block;
-        vertical-align: middle;
-        margin-left: 5px;
-        color: #ff4d6d;         /* optional red color */
-        transform: rotate(-10deg); /* playful tilt */
+      font-size: 1.5rem;
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 5px;
+      color: #ff4d6d;
+      transform: rotate(-10deg);
     }
-
 
     .modal-content p {
       color: #d6336c;
@@ -246,10 +257,10 @@
       .modal-content p {
         font-size: 1rem;
       }
-       .modal-content .message-img {
-            max-width: 180px;
-            margin: 10px 0;
-        }
+      .modal-content .message-img {
+        max-width: 180px;
+        margin: 10px 0;
+      }
     }
   </style>
 </head>
@@ -263,6 +274,9 @@
       <button id="no" class="no">No</button>
     </div>
   </div>
+
+  <!-- Floating elements container -->
+  <div class="floating-wrapper" id="floatingWrapper"></div>
 
   <!-- Modal -->
   <div class="modal" id="modal">
@@ -280,6 +294,7 @@ const yesBtn = document.getElementById('yes');
 const noBtn = document.getElementById('no');
 const modal = document.getElementById('modal');
 const modalContent = document.getElementById('modalContent');
+const floatingWrapper = document.getElementById('floatingWrapper');
 
 let noClickCount = 0;
 
@@ -291,14 +306,12 @@ function closeModal() {
 noBtn.addEventListener('click', () => {
   noClickCount++;
   let scale;
-  
   if (noClickCount === 1) scale = 0.7;
   else if (noClickCount === 2) scale = 0.4;
   else if (noClickCount >= 3) {
     noBtn.style.display = 'none';
     return;
   }
-
   noBtn.style.transform = `scale(${scale})`;
   yesBtn.style.transform = `scale(${1 + noClickCount * 0.3})`;
 });
@@ -312,13 +325,9 @@ yesBtn.addEventListener('click', () => {
 
 // Floating hearts & images
 const floatingElements = [
-  '💖', '💘', '💝',
-  'images/photo1.jpg', 
-  'images/photo2.jpg', 
-  'images/photo3.jpg',
-  'images/photo4.jpg',
-  'images/photo5.jpg',
-  'images/main_photo.jpg'
+  '💖','💘','💝',
+  'images/photo1.jpg','images/photo2.jpg','images/photo3.jpg',
+  'images/photo4.jpg','images/photo5.jpg','images/main_photo.jpg'
 ];
 
 function createFloating() {
@@ -339,17 +348,18 @@ function createFloating() {
     el.style.fontSize = '25px';
   }
 
-  el.style.left = Math.random() * window.innerWidth + 'px';
-  el.style.animationDuration = (5 + Math.random() * 3) + 's';
-  document.body.appendChild(el);
+  // Prevent overflow-x
+  el.style.left = Math.random() * (window.innerWidth - 60) + 'px';
+  el.style.animationDuration = (5 + Math.random()*3)+'s';
+  floatingWrapper.appendChild(el);
 
-  setTimeout(() => el.remove(), 8000);
+  setTimeout(()=>el.remove(),8000);
 }
 
 setInterval(createFloating, 500);
 
 // Heart pop inside modal
-function createHeartPop() {
+function createHeartPop(){
   for(let i=0;i<10;i++){
     const heart = document.createElement('div');
     heart.classList.add('heart-pop');
