@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Valentine's Day</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
+  <style>
+    /* Reset */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, #ffe6e6, #ffcccc);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden; /* hides overflow on mobile */
+      position: relative;
+      padding: 20px;
+    }
+
+    /* Main container */
+    .valentine-container {
+      text-align: center;
+      background: rgba(255,255,255,0.9);
+      padding: 40px 30px;              
+      border-radius: 25px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+      max-width: 600px;                
+      width: 100%;
+      position: relative;
+      z-index: 1;
+      overflow: hidden; /* keep floating elements inside */
+      transition: transform 0.3s ease;
+    }
+
+    /* Main image */
+    .valentine-container img {
+      width: 100%;
+      max-width: 250px;   
+      height: 250px;      
+      object-fit: cover;
+      border-radius: 50%;
+      margin-bottom: 20px;
+      border: 4px solid #d6336c;
+      transition: transform 0.3s ease;
+    }
+
+    .valentine-container h1 {
+      font-size: 2rem;
+      color: #d6336c;
+      margin-bottom: 20px;
+    }
+
+    .buttons {
+      margin-top: 15px;
+    }
+
+    .buttons button {
+      font-size: 1.2rem;
+      padding: 10px 30px;
+      margin: 5px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: white;
+      background-color: #d6336c;
+    }
+
+    .buttons button.no {
+      background-color: #ff4d6d;
+    }
+
+    .buttons button:hover {
+      transform: scale(1.1);
+    }
+
+    /* Floating hearts & images */
+    .floating {
+      position: absolute;
+      animation: float 6s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(-150px) rotate(360deg); opacity: 0; }
+    }
+
+    /* Modal */
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 10;
+      padding: 20px;
+    }
+
+    .modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 35px 20px;
+      border-radius: 25px;
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+      animation: scaleIn 0.3s ease forwards;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @keyframes scaleIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-content h2 {
+      color: #d6336c;
+      margin-bottom: 12px;
+      font-size: 1.6rem;
+    }
+
+    /* Modal image styling */
+    .modal-content .message-img {
+        width: 100%;
+        max-width: 250px;   /* controls max size */
+        height: auto;        /* keeps aspect ratio */
+        border-radius: 20px; /* rounded corners */
+        margin: 15px 0;      /* spacing between text */
+        object-fit: cover;   /* keeps image nice */
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        transition: transform 0.3s ease;
+    }
+
+    .modal-content .message-img:hover {
+        transform: scale(1.05); /* subtle hover effect */
+    }
+
+    .modal-content p .kiss {
+        font-size: 1.5rem;      /* make it bigger */
+        display: inline-block;
+        vertical-align: middle;
+        margin-left: 5px;
+        color: #ff4d6d;         /* optional red color */
+        transform: rotate(-10deg); /* playful tilt */
+    }
+
+
+    .modal-content p {
+      color: #d6336c;
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+    }
+
+    .modal-content button {
+      padding: 10px 30px;
+      border: none;
+      border-radius: 50px;
+      background-color: #d6336c;
+      color: white;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .modal-content button:hover {
+      background-color: #ff4d6d;
+      transform: scale(1.05);
+    }
+
+    /* Heart pop inside modal */
+    .heart-pop {
+      position: absolute;
+      font-size: 25px;
+      color: #ff4d6d;
+      animation: popUp 1s forwards;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    @keyframes popUp {
+      0% { transform: scale(0); opacity: 1; }
+      50% { transform: scale(1.5); opacity: 1; }
+      100% { transform: scale(1); opacity: 0; }
+    }
+
+    /* Confetti */
+    .confetti {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background-color: #ff4d6d;
+      opacity: 0.9;
+      pointer-events: none;
+      z-index: 15;
+      border-radius: 2px;
+      animation: confettiFall linear forwards;
+    }
+
+    @keyframes confettiFall {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(600px) rotate(360deg); opacity: 0; }
+    }
+
+    /* Responsive */
+    @media (max-width: 500px) {
+      .valentine-container {
+        padding: 25px 15px;
+        max-width: 320px; 
+      }
+
+      .valentine-container img {
+        max-width: 180px; 
+        height: 180px;
+      }
+
+      .valentine-container h1 {
+        font-size: 1.2rem;
+      }
+
+      .buttons button {
+        padding: 8px 20px;
+        font-size: 1rem;
+      }
+
+      .modal-content h2 {
+        font-size: 1.3rem;
+      }
+
+      .modal-content p {
+        font-size: 1rem;
+      }
+       .modal-content .message-img {
+            max-width: 180px;
+            margin: 10px 0;
+        }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="valentine-container">
+    <img src="images/main_photo.jpg" alt="Valentine Image">
+    <h1>Will you be my Valentine?</h1>
+    <div class="buttons">
+      <button id="yes">Yes</button>
+      <button id="no" class="no">No</button>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="modal-content" id="modalContent">
+      <h2>💖 I knew you’d say yes! 💖</h2>
+      <img src="images/photo4.jpg" class="message-img">
+      <p>Happy Valentine’s Day, Mahal💖! 💕</p>
+      <p>I Love You So Much 💕 <span class="kiss">💋</span></p>
+      <button onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
+<script>
+const yesBtn = document.getElementById('yes');
+const noBtn = document.getElementById('no');
+const modal = document.getElementById('modal');
+const modalContent = document.getElementById('modalContent');
+
+let noClickCount = 0;
+
+function closeModal() {
+  modal.classList.remove('active');
+}
+
+// No button shrink logic
+noBtn.addEventListener('click', () => {
+  noClickCount++;
+  let scale;
+  
+  if (noClickCount === 1) scale = 0.7;
+  else if (noClickCount === 2) scale = 0.4;
+  else if (noClickCount >= 3) {
+    noBtn.style.display = 'none';
+    return;
+  }
+
+  noBtn.style.transform = `scale(${scale})`;
+  yesBtn.style.transform = `scale(${1 + noClickCount * 0.3})`;
+});
+
+// Yes button -> modal + hearts + confetti
+yesBtn.addEventListener('click', () => {
+  modal.classList.add('active');
+  createHeartPop();
+  createConfetti();
+});
+
+// Floating hearts & images
+const floatingElements = [
+  '💖', '💘', '💝',
+  'images/photo1.jpg', 
+  'images/photo2.jpg', 
+  'images/photo3.jpg',
+  'images/photo4.jpg',
+  'images/photo5.jpg',
+  'images/main_photo.jpg'
+];
+
+function createFloating() {
+  const el = document.createElement('div');
+  el.classList.add('floating');
+  const item = floatingElements[Math.floor(Math.random() * floatingElements.length)];
+
+  if(item.match(/\.(jpg|jpeg|png)$/i)) {
+    const img = document.createElement('img');
+    img.src = item;
+    img.style.width = '55px';
+    img.style.height = '55px';
+    img.style.borderRadius = '50%';
+    img.style.objectFit = 'cover';
+    el.appendChild(img);
+  } else {
+    el.textContent = item;
+    el.style.fontSize = '25px';
+  }
+
+  el.style.left = Math.random() * window.innerWidth + 'px';
+  el.style.animationDuration = (5 + Math.random() * 3) + 's';
+  document.body.appendChild(el);
+
+  setTimeout(() => el.remove(), 8000);
+}
+
+setInterval(createFloating, 500);
+
+// Heart pop inside modal
+function createHeartPop() {
+  for(let i=0;i<10;i++){
+    const heart = document.createElement('div');
+    heart.classList.add('heart-pop');
+    heart.textContent = '💖';
+    heart.style.left = Math.random()*(modalContent.clientWidth-20)+'px';
+    heart.style.top = Math.random()*(modalContent.clientHeight-20)+'px';
+    modalContent.appendChild(heart);
+    setTimeout(()=>heart.remove(),1200);
+  }
+}
+
+// Confetti
+function createConfetti(){
+  for(let i=0;i<50;i++){
+    const conf = document.createElement('div');
+    conf.classList.add('confetti');
+    conf.style.left = Math.random()*window.innerWidth+'px';
+    conf.style.backgroundColor=`hsl(${Math.random()*360},100%,70%)`;
+    conf.style.width=conf.style.height=(5+Math.random()*5)+'px';
+    conf.style.animationDuration=(2+Math.random()*3)+'s';
+    document.body.appendChild(conf);
+    setTimeout(()=>conf.remove(),5000);
+  }
+}
+</script>
+
+</body>
+</html>
